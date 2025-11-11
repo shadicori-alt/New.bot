@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدير المندوبين - منصة التكامل الذكية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .delegate-card {
+            transition: all 0.3s ease;
+        }
+        
+        .delegate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .whatsapp-button {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+        }
+        
+        .whatsapp-button:hover {
+            background: linear-gradient(135deg, #128C7E, #075E54);
+        }
+        
+        .order-item {
+            transition: all 0.2s ease;
+        }
+        
+        .order-item:hover {
+            background-color: #F3F4F6;
+        }
+        
+        .governorate-tab {
+            transition: all 0.2s ease;
+        }
+        
+        .governorate-tab.active {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            color: white;
+        }
+        
+        .google-sheets-sync {
+            background: linear-gradient(135deg, #34A853, #0F9D58);
+        }
+        
+        .google-sheets-sync:hover {
+            background: linear-gradient(135deg, #0F9D58, #137333);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="text-3xl">👥</span>
+                    <h1 class="text-2xl font-bold gradient-text">
+                        مدير المندوبين
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="syncWithGoogleSheets()" class="google-sheets-sync text-white px-4 py-2 rounded-lg transition-all">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        مزامنة مع Google Sheets
+                    </button>
+                    <button onclick="addNewDelegate()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+                        <i class="fas fa-plus mr-2"></i>
+                        إضافة مندوب
+                    </button>
+                    <a href="dashboard.html" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        العودة
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Statistics Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">إجمالي المندوبين</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="total-delegates">0</p>
+                    </div>
+                    <div class="text-4xl">👥</div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">نشط الآن</h3>
+                        <p class="text-3xl font-bold text-green-600" id="active-delegates">0</p>
+                    </div>
+                    <div class="text-4xl">🟢</div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">إجمالي الطلبات</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="total-orders">0</p>
+                    </div>
+                    <div class="text-4xl">📦</div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">متوسط الطلبات</h3>
+                        <p class="text-3xl font-bold text-orange-600" id="avg-orders">0</p>
+                    </div>
+                    <div class="text-4xl">📊</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Governorate Tabs -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+            <h2 class="text-2xl font-bold gradient-text mb-6">
+                <i class="fas fa-map-marker-alt mr-2"></i>
+                المندوبين حسب المحافظة
+            </h2>
+            
+            <div class="flex flex-wrap gap-2 mb-6" id="governorate-tabs">
+                <!-- Governorate tabs will be loaded here -->
+            </div>
+
+            <!-- Delegates Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="delegates-grid">
+                <!-- Delegates will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Selected Delegate Details -->
+        <div id="delegate-details" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Delegate Info -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <div class="text-center mb-6">
+                            <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h3 class="text-xl font-bold" id="delegate-name-display">اسم المندوب</h3>
+                            <p class="text-gray-600" id="delegate-governorate-display">المحافظة</p>
+                            <div class="flex items-center justify-center gap-2 mt-2">
+                                <span class="status-badge px-3 py-1 rounded-full text-sm">نشط</span>
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                    <span id="delegate-orders-display">0</span> طلب
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">رقم الواتساب</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="tel" id="delegate-whatsapp-input" class="flex-1 border-2 border-gray-200 rounded-lg p-2 focus:border-blue-500 focus:outline-none">
+                                    <button onclick="sendWhatsAppMessage()" class="whatsapp-button text-white px-3 py-2 rounded-lg hover:opacity-90 transition-all">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">المنطقة/الحي</label>
+                                <input type="text" id="delegate-area-input" class="w-full border-2 border-gray-200 rounded-lg p-2 focus:border-blue-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">ملاحظات</label>
+                                <textarea id="delegate-notes-input" rows="3" class="w-full border-2 border-gray-200 rounded-lg p-2 focus:border-blue-500 focus:outline-none"></textarea>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button onclick="updateDelegateInfo()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all">
+                                    <i class="fas fa-save mr-2"></i>
+                                    تحديث
+                                </button>
+                                <button onclick="toggleDelegateStatus()" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-all">
+                                    <i class="fas fa-toggle-on mr-2"></i>
+                                    تغيير الحالة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Management -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold gradient-text">
+                                <i class="fas fa-shopping-cart mr-2"></i>
+                                الطلبات
+                            </h3>
+                            <div class="flex gap-2">
+                                <button onclick="addOrder()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    إضافة طلب
+                                </button>
+                                <button onclick="exportOrders()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                                    <i class="fas fa-file-export mr-2"></i>
+                                    تصدير
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Orders Filters -->
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button onclick="filterOrders('all')" class="filter-btn bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                                الكل
+                            </button>
+                            <button onclick="filterOrders('pending')" class="filter-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-300">
+                                قيد الانتظار
+                            </button>
+                            <button onclick="filterOrders('processing')" class="filter-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-300">
+                                قيد التنفيذ
+                            </button>
+                            <button onclick="filterOrders('completed')" class="filter-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-300">
+                                مكتمل
+                            </button>
+                            <button onclick="filterOrders('cancelled')" class="filter-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-300">
+                                ملغي
+                            </button>
+                        </div>
+
+                        <!-- Orders List -->
+                        <div class="space-y-3 max-h-96 overflow-y-auto" id="orders-list">
+                            <!-- Orders will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WhatsApp Integration -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold gradient-text">
+                    <i class="fab fa-whatsapp mr-2"></i>
+                    تكامل واتساب المندوبين
+                </h2>
+                <div class="flex gap-2">
+                    <button onclick="sendBulkMessage()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all">
+                        <i class="fas fa-broadcast-tower mr-2"></i>
+                        إرسال جماعي
+                    </button>
+                    <button onclick="setupWhatsAppBot()" class="whatsapp-button text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all">
+                        <i class="fas fa-robot mr-2"></i>
+                        إعداد البوت
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-3">
+                        <i class="fas fa-cogs mr-2 text-green-600"></i>
+                        إعدادات البوت
+                    </h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" checked class="mr-2">
+                            <span class="text-sm">إرسال تلقائي للطلبات</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" checked class="mr-2">
+                            <span class="text-sm">تأكيد الاستلام</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2">
+                            <span class="text-sm">تتبع الطلبات</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" checked class="mr-2">
+                            <span class="text-sm">إشعارات التأخير</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-3">
+                        <i class="fas fa-clock mr-2 text-blue-600"></i>
+                        مواعيد الإرسال
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">وقت الإرسال</label>
+                            <select class="w-full border-2 border-gray-200 rounded-lg p-2 focus:border-blue-500 focus:outline-none">
+                                <option>فوراً</option>
+                                <option>كل ساعة</option>
+                                <option>كل ٣ ساعات</option>
+                                <option>يومياً الساعة ٩ صباحاً</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">أيام العمل</label>
+                            <div class="flex flex-wrap gap-1">
+                                <button class="bg-blue-600 text-white px-2 py-1 rounded text-xs">السبت</button>
+                                <button class="bg-blue-600 text-white px-2 py-1 rounded text-xs">الأحد</button>
+                                <button class="bg-blue-600 text-white px-2 py-1 rounded text-xs">الاثنين</button>
+                                <button class="bg-blue-600 text-white px-2 py-1 rounded text-xs">الثلاثاء</button>
+                                <button class="bg-blue-600 text-white px-2 py-1 rounded text-xs">الأربعاء</button>
+                                <button class="bg-blue-600 text-white px-2 py-1 rounded text-xs">الخميس</button>
+                                <button class="bg-gray-300 text-gray-700 px-2 py-1 rounded text-xs">الجمعة</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-3">
+                        <i class="fas fa-chart-bar mr-2 text-purple-600"></i>
+                        إحصائيات الإرسال
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm">الرسائل المرسلة اليوم</span>
+                            <span class="font-bold text-green-600">47</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm">معدل الاستجابة</span>
+                            <span class="font-bold text-blue-600">89%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm">وقت الرد المتوسط</span>
+                            <span class="font-bold text-purple-600">12 دقيقة</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm">الرسائل المعلقة</span>
+                            <span class="font-bold text-orange-600">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Sheets Integration -->
+        <div class="bg-white rounded-2xl shadow-xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold gradient-text">
+                    <i class="fab fa-google mr-2"></i>
+                    Google Sheets Integration
+                </h2>
+                <div class="flex gap-2">
+                    <button onclick="createSheet()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                        <i class="fas fa-plus mr-2"></i>
+                        إنشاء شيت جديد
+                    </button>
+                    <button onclick="linkSheet()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+                        <i class="fas fa-link mr-2"></i>
+                        ربط شيت موجود
+                    </button>
+                    <button onclick="syncData()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        مزامنة البيانات
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="font-bold text-lg mb-4">
+                        <i class="fas fa-table mr-2 text-blue-600"></i>
+                        الشيتات المتصلة
+                    </h3>
+                    <div class="space-y-3" id="sheets-list">
+                        <!-- Sheets will be loaded here -->
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-lg mb-4">
+                        <i class="fas fa-cog mr-2 text-green-600"></i>
+                        إعدادات المزامنة
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">تردد المزامنة</label>
+                            <select class="w-full border-2 border-gray-200 rounded-lg p-2 focus:border-blue-500 focus:outline-none">
+                                <option>كل 5 دقائق</option>
+                                <option>كل 15 دقيقة</option>
+                                <option>كل ساعة</option>
+                                <option>كل 6 ساعات</option>
+                                <option>يومياً</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">نوع البيانات للمزامنة</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="mr-2">
+                                    <span class="text-sm">طلبات المندوبين</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="mr-2">
+                                    <span class="text-sm">معلومات المندوبين</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-2">
+                                    <span class="text-sm">إحصائيات الأداء</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="mr-2">
+                                    <span class="text-sm">حالات الطلبات</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Delegate Modal -->
+    <div id="add-delegate-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-2xl mx-4 max-h-96 overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">إضافة مندوب جديد</h3>
+                <button onclick="closeAddDelegateModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">الاسم الكامل</label>
+                    <input type="text" id="new-delegate-name" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none" placeholder="أحمد محمد علي">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">المحافظة</label>
+                    <select id="new-delegate-governorate" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                        <option value="القاهرة">القاهرة</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="الاسكندرية">الاسكندرية</option>
+                        <option value="المنوفية">المنوفية</option>
+                        <option value="الشرقية">الشرقية</option>
+                        <option value="الغربية">الغربية</option>
+                        <option value="الدقهلية">الدقهلية</option>
+                        <option value="كفر الشيخ">كفر الشيخ</option>
+                        <option value="الفيوم">الفيوم</option>
+                        <option value="بني سويف">بني سويف</option>
+                        <option value="المنيا">المنيا</option>
+                        <option value="أسيوط">أسيوط</option>
+                        <option value="سوهاج">سوهاج</option>
+                        <option value="قنا">قنا</option>
+                        <option value="الأقصر">الأقصر</option>
+                        <option value="أسوان">أسوان</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">رقم الواتساب</label>
+                    <input type="tel" id="new-delegate-whatsapp" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none" placeholder="+20100XXXXXXX">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">المنطقة/الحي</label>
+                    <input type="text" id="new-delegate-area" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none" placeholder="مدينة نصر - القاهرة">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-2">ملاحظات</label>
+                    <textarea id="new-delegate-notes" rows="3" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none" placeholder="أي ملاحظات إضافية..."></textarea>
+                </div>
+            </div>
+
+            <div class="flex gap-2 mt-6">
+                <button onclick="saveNewDelegate()" class="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-all">
+                    <i class="fas fa-save mr-2"></i>
+                    حفظ المندوب
+                </button>
+                <button onclick="closeAddDelegateModal()" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Order Modal -->
+    <div id="add-order-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-lg mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">إضافة طلب جديد</h3>
+                <button onclick="closeAddOrderModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">اسم العميل</label>
+                    <input type="text" id="order-customer-name" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">رقم الهاتف</label>
+                    <input type="tel" id="order-customer-phone" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">عنوان التوصيل</label>
+                    <textarea id="order-address" rows="3" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">تفاصيل الطلب</label>
+                    <textarea id="order-details" rows="3" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">السعر</label>
+                    <input type="number" id="order-price" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="flex gap-2 mt-6">
+                <button onclick="saveOrder()" class="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-all">
+                    <i class="fas fa-save mr-2"></i>
+                    حفظ الطلب
+                </button>
+                <button onclick="closeAddOrderModal()" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-16 py-8 border-t">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-600">© 2024 منصة التكامل الذكية - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <script src="delegates-manager.js"></script>
+</body>
+</html>

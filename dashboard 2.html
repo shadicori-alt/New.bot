@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 منصة التكامل الذكية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status-card {
+            transition: all 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .chat-container {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .gradient-border {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            padding: 2px;
+            border-radius: 12px;
+        }
+        
+        .gradient-border-inner {
+            background: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="text-3xl">🤖</span>
+                    <h1 class="text-2xl font-bold gradient-text">
+                        منصة التكامل الذكية
+                    </h1>
+                </div>
+                <button id="chatToggle" class="bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition-all">
+                    <i class="fas fa-comments"></i> مساعد
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="status-card bg-white rounded-xl shadow-lg p-6 border-2" id="facebook-card">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-lg flex items-center">
+                        <i class="fab fa-facebook text-blue-600 mr-2"></i>
+                        فيسبوك
+                    </h3>
+                    <span class="text-sm px-3 py-1 rounded-full bg-green-100 text-green-800">
+                        🟢 نشط
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">3 صفحات مربوطة</p>
+                <button onclick="toggleService('facebook')" class="w-full py-2 rounded-lg font-bold transition-all bg-red-500 hover:bg-red-600 text-white">
+                    إيقاف الخدمة
+                </button>
+            </div>
+
+            <div class="status-card bg-white rounded-xl shadow-lg p-6 border-2" id="whatsapp-card">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-lg flex items-center">
+                        <i class="fab fa-whatsapp text-green-600 mr-2"></i>
+                        واتساب
+                    </h3>
+                    <span class="text-sm px-3 py-1 rounded-full bg-red-100 text-red-800">
+                        ⚫ غير نشط
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">قيد الربط</p>
+                <button onclick="toggleService('whatsapp')" class="w-full py-2 rounded-lg font-bold transition-all bg-green-500 hover:bg-green-600 text-white">
+                    تشغيل الخدمة
+                </button>
+            </div>
+
+            <div class="status-card bg-white rounded-xl shadow-lg p-6 border-2" id="ai-card">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-lg flex items-center">
+                        <i class="fas fa-brain text-purple-600 mr-2"></i>
+                        الذكاء
+                    </h3>
+                    <span class="text-sm px-3 py-1 rounded-full bg-green-100 text-green-800">
+                        🟢 نشط
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">GPT-4 نشط</p>
+                <button onclick="toggleService('ai')" class="w-full py-2 rounded-lg font-bold transition-all bg-red-500 hover:bg-red-600 text-white">
+                    إيقاف الخدمة
+                </button>
+            </div>
+
+            <div class="status-card bg-white rounded-xl shadow-lg p-6 border-2" id="autoreply-card">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-lg flex items-center">
+                        <i class="fas fa-rocket text-orange-600 mr-2"></i>
+                        ردود تلقائية
+                    </h3>
+                    <span class="text-sm px-3 py-1 rounded-full bg-green-100 text-green-800">
+                        🟢 نشط
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">معدل الرد: 2 ثانية</p>
+                <button onclick="toggleService('autoreply')" class="w-full py-2 rounded-lg font-bold transition-all bg-red-500 hover:bg-red-600 text-white">
+                    إيقاف الخدمة
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-xl shadow-lg p-2 mb-8">
+            <div class="flex flex-wrap gap-2">
+                <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all bg-blue-600 text-white" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt mr-1"></i>
+                    لوحة التحكم
+                </button>
+                <a href="facebook-manager.html" class="tab-btn px-4 py-2 rounded-lg font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200">
+                    <i class="fas fa-file-alt mr-1"></i>
+                    الصفحات
+                </a>
+                <a href="delegates-manager.html" class="tab-btn px-4 py-2 rounded-lg font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200">
+                    <i class="fas fa-users mr-1"></i>
+                    المندوبين
+                </a>
+                <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200" data-tab="settings">
+                    <i class="fas fa-cog mr-1"></i>
+                    إعدادات البوت
+                </button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200" data-tab="reports">
+                    <i class="fas fa-chart-bar mr-1"></i>
+                    التقارير
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tab-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Facebook Pages Management -->
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="text-2xl">📘</span>
+                                <h2 class="text-2xl font-bold gradient-text">
+                                    إدارة صفحات فيسبوك
+                                </h2>
+                            </div>
+                            <button onclick="connectFacebook()" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 rounded-lg mb-6 hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg">
+                                <i class="fas fa-link mr-2"></i>
+                                اضغط للربط السريع بفيسبوك (OAuth)
+                            </button>
+                            <div class="space-y-4" id="facebook-pages">
+                                <!-- Pages will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="text-2xl">🚀</span>
+                                <h2 class="text-2xl font-bold gradient-text">
+                                    أدوات سريعة
+                                </h2>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="quickAction('export')" class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div class="text-2xl mb-2"><i class="fas fa-file-export"></i></div>
+                                    <div class="font-bold">تصدير الطلبات</div>
+                                </button>
+                                <button onclick="quickAction('sync')" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div class="text-2xl mb-2"><i class="fas fa-sync-alt"></i></div>
+                                    <div class="font-bold">مزامنة الآن</div>
+                                </button>
+                                <button onclick="quickAction('cleanup')" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-4 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div class="text-2xl mb-2"><i class="fas fa-broom"></i></div>
+                                    <div class="font-bold">تنظيف البيانات</div>
+                                </button>
+                                <button onclick="quickAction('notify')" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div class="text-2xl mb-2"><i class="fas fa-bullhorn"></i></div>
+                                    <div class="font-bold">إرسال إشعار</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        <!-- Add New Delegate -->
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="text-2xl">➕</span>
+                                <h2 class="text-2xl font-bold gradient-text">
+                                    إضافة مندوب جديد
+                                </h2>
+                            </div>
+                            <div class="space-y-4">
+                                <input type="text" id="delegate-name" placeholder="اسم المندوب" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                                <select id="delegate-governorate" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                                    <option value="القاهرة">القاهرة</option>
+                                    <option value="الجيزة">الجيزة</option>
+                                    <option value="الاسكندرية">الاسكندرية</option>
+                                    <option value="المنوفية">المنوفية</option>
+                                    <option value="الشرقية">الشرقية</option>
+                                    <option value="الغربية">الغربية</option>
+                                    <option value="الدقهلية">الدقهلية</option>
+                                    <option value="كفر الشيخ">كفر الشيخ</option>
+                                    <option value="الفيوم">الفيوم</option>
+                                    <option value="بني سويف">بني سويف</option>
+                                </select>
+                                <input type="tel" id="delegate-whatsapp" placeholder="رقم واتساب (+20100...)" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                                <button onclick="addDelegate()" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all shadow-lg">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    إضافة المندوب
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Active Delegates -->
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="text-2xl">👥</span>
+                                <h2 class="text-2xl font-bold gradient-text">
+                                    المندوبين النشطين
+                                </h2>
+                            </div>
+                            <div class="space-y-3 max-h-96 overflow-y-auto" id="delegates-list">
+                                <!-- Delegates will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content hidden">
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="text-2xl">⚙️</span>
+                        <h2 class="text-2xl font-bold gradient-text">
+                            إعدادات البوت الذكي
+                        </h2>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block font-semibold mb-2">نمط الرد:</label>
+                            <select id="reply-mode" class="w-full border-2 border-blue-200 rounded-lg p-3 focus:border-blue-500 focus:outline-none">
+                                <option value="ai">🧠 ذكاء اصطناعي كامل (OpenAI GPT-4)</option>
+                                <option value="hybrid" selected>⚡ هجين (ذكاء + بوت محلي)</option>
+                                <option value="local">🏠 بوت محلي فقط (بدون إنترنت)</option>
+                                <option value="manual">👤 ردود يدوية من الإداري</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold mb-2">سرعة الرد (ثواني):</label>
+                            <input type="range" id="response-time" min="1" max="10" value="2" class="w-full">
+                            <div class="text-center mt-1"><span id="response-time-value">2</span> ثانية</div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold mb-2">كلمات المفتاح للطلبات:</label>
+                            <div class="flex flex-wrap gap-2 mb-3" id="keywords-container">
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                    طلب <button onclick="removeKeyword(this)" class="ml-2 text-red-500">✕</button>
+                                </span>
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                    عايز <button onclick="removeKeyword(this)" class="ml-2 text-red-500">✕</button>
+                                </span>
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                    حابب <button onclick="removeKeyword(this)" class="ml-2 text-red-500">✕</button>
+                                </span>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" id="new-keyword" placeholder="كلمة مفتاح جديدة" class="flex-1 border-2 border-gray-200 rounded-lg p-2 focus:border-blue-500 focus:outline-none">
+                                <button onclick="addKeyword()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                                    إضافة
+                                </button>
+                            </div>
+                        </div>
+
+                        <button onclick="saveBotSettings()" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all shadow-lg">
+                            <i class="fas fa-save mr-2"></i>
+                            حفظ إعدادات البوت
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chat Assistant -->
+    <div id="chat-container" class="fixed bottom-6 left-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden chat-container hidden">
+        <div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 flex justify-between items-center">
+            <h3 class="font-bold"><i class="fas fa-robot mr-2"></i> مساعد النظام الذكي</h3>
+            <button id="close-chat" class="text-2xl hover:scale-110 transition"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="flex-1 p-4 overflow-y-auto bg-gray-50" id="chat-messages">
+            <div class="mb-3 flex justify-end">
+                <div class="max-w-xs px-4 py-2 rounded-2xl bg-gray-200 text-gray-800 rounded-bl-none">
+                    أهلاً بك! أنا مساعدك الذكي. اطرح أي سؤال عن النظام.
+                </div>
+            </div>
+        </div>
+        <div class="p-3 border-t bg-white flex gap-2">
+            <input type="text" id="chat-input" placeholder="اشرح مشكلتك هنا..." class="flex-1 border-2 border-gray-200 rounded-full px-4 py-2 focus:border-purple-500 focus:outline-none">
+            <button id="send-message" class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 transition-all">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-16 py-8 border-t">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-600">© 2024 منصة التكامل الذكية - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
