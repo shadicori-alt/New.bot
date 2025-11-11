@@ -1,8 +1,12 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/", "destination": "/index.html" },
     { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/api-settings", "destination": "/api-settings.html" },
+    { "source": "/bot-control", "destination": "/bot-control.html" },
     { "source": "/delegates", "destination": "/delegates-manager.html" },
-    { "source": "/facebook", "destination": "/facebook-manager.html" }
+    { "source": "/facebook", "destination": "/facebook-manager.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
