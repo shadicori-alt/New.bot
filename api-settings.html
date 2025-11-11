@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات الـ APIs - منصة التكامل الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #4cc9f0;
+            margin-bottom: 10px;
+        }
+        
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .api-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(76, 201, 240, 0.2);
+            border-color: #4cc9f0;
+        }
+        
+        .api-card h2 {
+            color: #f72585;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4cc9f0;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        
+        .status-connected { background: #4caf50; }
+        .status-disconnected { background: #f44336; }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+            width: 100%;
+        }
+        
+        .btn-save:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-test {
+            background: #f72585;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ إعدادات الـ APIs</h1>
+            <p>ربط جميع الخدمات الخارجية للمنصة</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="/" class="nav-btn">🏠 الرئيسية</a>
+            <a href="/dashboard.html" class="nav-btn">📊 Dashboard</a>
+            <a href="/bot-control.html" class="nav-btn">🤖 Bot Control</a>
+        </div>
+        
+        <div class="api-grid">
+            <!-- Facebook Messenger API -->
+            <div class="api-card">
+                <h2>📘 Facebook Messenger API</h2>
+                <div class="form-group">
+                    <label>Page Access Token <span class="status-indicator status-disconnected" id="fb-status"></span></label>
+                    <input type="password" id="fb-token" placeholder="EAABsi...">
+                </div>
+                <div class="form-group">
+                    <label>Page ID</label>
+                    <input type="text" id="fb-page-id" placeholder="123456789">
+                </div>
+                <div class="form-group">
+                    <label>Webhook Verify Token</label>
+                    <input type="password" id="fb-webhook" placeholder="اختر_رمز_سري">
+                </div>
+                <button class="btn-test" onclick="testConnection('facebook')">🧪 اختبار الاتصال</button>
+                <button class="btn-save" onclick="saveApi('facebook')">💾 حفظ الإعدادات</button>
+            </div>
+            
+            <!-- WhatsApp Business API -->
+            <div class="api-card">
+                <h2>💬 WhatsApp Business API</h2>
+                <div class="form-group">
+                    <label>API Key <span class="status-indicator status-disconnected" id="wa-status"></span></label>
+                    <input type="password" id="wa-api-key" placeholder="sk-whatsapp-...">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number ID</label>
+                    <input type="text" id="wa-phone-id" placeholder="10987654321">
+                </div>
+                <div class="form-group">
+                    <label>Business Account ID</label>
+                    <input type="text" id="wa-business-id" placeholder="987654321">
+                </div>
+                <button class="btn-test" onclick="testConnection('whatsapp')">🧪 اختبار الاتصال</button>
+                <button class="btn-save" onclick="saveApi('whatsapp')">💾 حفظ الإعدادات</button>
+            </div>
+            
+            <!-- AI Bot API -->
+            <div class="api-card">
+                <h2>🤖 AI Bot Integration</h2>
+                <div class="form-group">
+                    <label>API Endpoint <span class="status-indicator status-disconnected" id="bot-status"></span></label>
+                    <input type="url" id="bot-endpoint" placeholder="https://api.openai.com/v1">
+                </div>
+                <div class="form-group">
+                    <label>API Key</label>
+                    <input type="password" id="bot-api-key" placeholder="sk-...">
+                </div>
+                <div class="form-group">
+                    <label>Model Name</label>
+                    <select id="bot-model">
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="claude-3">Claude 3</option>
+                    </select>
+                </div>
+                <button class="btn-test" onclick="testConnection('bot')">🧪 اختبار الاتصال</button>
+                <button class="btn-save" onclick="saveApi('bot')">💾 حفظ الإعدادات</button>
+            </div>
+            
+            <!-- Google Sheets API -->
+            <div class="api-card">
+                <h2>📊 Google Sheets Integration</h2>
+                <div class="form-group">
+                    <label>Service Account JSON <span class="status-indicator status-disconnected" id="gs-status"></span></label>
+                    <textarea id="gs-service-account" rows="5" placeholder='{"type":"service_account",...}' style="width:100%;padding:12px;border-radius:8px;background:rgba(0,0,0,0.3);color:#fff;border:1px solid rgba(255,255,255,0.2);"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Spreadsheet ID</label>
+                    <input type="text" id="gs-spreadsheet-id" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+                </div>
+                <div class="form-group">
+                    <label>Sheet Name</label>
+                    <input type="text" id="gs-sheet-name" placeholder="Sheet1">
+                </div>
+                <button class="btn-test" onclick="testConnection('googlesheets')">🧪 اختبار الاتصال</button>
+                <button class="btn-save" onclick="saveApi('googlesheets')">💾 حفظ الإعدادات</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // تحميل الإعدادات المحفوظة
+        window.onload = function() {
+            loadAllApis();
+        };
+        
+        function loadAllApis() {
+            const apis = ['facebook', 'whatsapp', 'bot', 'googlesheets'];
+            apis.forEach(api => {
+                const apiData = localStorage.getItem(`api_${api}`);
+                if (apiData) {
+                    const data = JSON.parse(apiData);
+                    populateApiForm(api, data);
+                    updateStatus(api, true);
+                }
+            });
+        }
+        
+        function populateApiForm(api, data) {
+            Object.keys(data).forEach(key => {
+                const element = document.getElementById(`${api}-${key}`);
+                if (element) element.value = data[key];
+            });
+        }
+        
+        function saveApi(apiName) {
+            const inputs = document.querySelectorAll(`#${apiName}-card input, #${apiName}-card select, #${apiName}-card textarea`);
+            const data = {};
+            
+            inputs.forEach(input => {
+                data[input.id.replace(`${apiName}-`, '')] = input.value;
+            });
+            
+            localStorage.setItem(`api_${apiName}`, JSON.stringify(data));
+            updateStatus(apiName, true);
+            
+            // تأثير حفظ ناجح
+            const btn = event.target;
+            btn.textContent = '✅ تم الحفظ!';
+            btn.style.background = '#4caf50';
+            setTimeout(() => {
+                btn.textContent = '💾 حفظ الإعدادات';
+                btn.style.background = 'linear-gradient(135deg, #4361ee, #3a0ca3)';
+            }, 2000);
+        }
+        
+        function testConnection(apiName) {
+            const btn = event.target;
+            btn.textContent = '⏳ جاري الاختبار...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                // محاكاة اختبار الاتصال
+                const isConnected = Math.random() > 0.3; // نجاح 70%
+                
+                if (isConnected) {
+                    updateStatus(apiName, true);
+                    btn.textContent = '✅ متصل';
+                    btn.style.background = '#4caf50';
+                } else {
+                    updateStatus(apiName, false);
+                    btn.textContent = '❌ فشل الاتصال';
+                    btn.style.background = '#f44336';
+                }
+                
+                setTimeout(() => {
+                    btn.textContent = '🧪 اختبار الاتصال';
+                    btn.style.background = '#f72585';
+                    btn.disabled = false;
+                }, 3000);
+            }, 2000);
+        }
+        
+        function updateStatus(apiName, status) {
+            const indicator = document.getElementById(`${apiName}-status`);
+            if (indicator) {
+                indicator.className = `status-indicator ${status ? 'status-connected' : 'status-disconnected'}`;
+            }
+        }
+    </script>
+</body>
+</html>
