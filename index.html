@@ -8,7 +8,7 @@
     <!-- ✅ رابط الخط الصحيح -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
     
-    <!-- ✅ إعادة توجيه صحيحة -->
+    <!-- ✅ إعادة توجيه بعد 3 ثوانٍ -->
     <meta http-equiv="refresh" content="3; url=/dashboard.html">
     
     <style>
@@ -66,6 +66,40 @@
             text-decoration: underline;
             font-weight: bold;
         }
+        
+        /* روابط الصفحات السريعة */
+        .quick-links {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .quick-links p {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .links-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .links-container a {
+            color: #FFD700;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        
+        .links-container a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -73,6 +107,18 @@
         <div class="spinner"></div>
         <h2>جاري تحميل منصة التكامل الذكية...</h2>
         <p>إذا لم يتم التحويل تلقائيًا، <a href="/dashboard.html">اضغط هنا</a></p>
+        
+        <!-- روابط سريعة للصفحات المتاحة -->
+        <div class="quick-links">
+            <p>الصفحات المتاحة:</p>
+            <div class="links-container">
+                <a href="/api-settings.html">⚙️ APIs</a>
+                <a href="/bot-control.html">🤖 Bot Control</a>
+                <a href="/dashboard.html">📊 Dashboard</a>
+                <a href="/delegates-manager.html">👥 Delegates</a>
+                <a href="/facebook-manager.html">📘 Facebook</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
